@@ -20,7 +20,7 @@
       ...
     }:
 
-    flake-utils.lib.eachDefaultSystem (
+    (flake-utils.lib.eachDefaultSystem (
       system:
 
       let
@@ -30,20 +30,19 @@
 
       {
         formatter = treefmtEval.config.build.wrapper;
-
-        checks = {
-          formatting = treefmtEval.config.build.check self;
-        };
-
-        homeModules = rec {
-          prismlauncher = import ./modules/home.nix;
-          default = prismlauncher;
-        };
-
-        nixosModules = rec {
-          prismlauncher = import ./modules/nixos.nix;
-          default = prismlauncher;
-        };
+        checks.formatting = treefmtEval.config.build.check self;
       }
-    );
+    ))
+
+    // {
+      homeModules = rec {
+        prismlauncher = import ./modules/home.nix;
+        default = prismlauncher;
+      };
+
+      nixosModules = rec {
+        prismlauncher = import ./modules/nixos.nix;
+        default = prismlauncher;
+      };
+    };
 }
