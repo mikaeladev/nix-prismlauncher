@@ -1,2 +1,3 @@
 # nix-prismlauncher
-A home-manager module for declaratively configuring Prism Launcher
+
+A flake providing modules for declaratively configuring Prism Launcher
