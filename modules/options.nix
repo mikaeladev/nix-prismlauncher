@@ -23,5 +23,23 @@ in
         available in your profile.
       '';
     };
+
+    extraConfig = mkOption {
+      type =
+        with types;
+        attrsOf (oneOf [
+          bool
+          int
+          str
+        ]);
+      default = { };
+      example = {
+        ShowConsole = true;
+        ConsoleMaxLines = 100000;
+      };
+      description = ''
+        Extra settings for {file}`$XDG_DATA_HOME/PrismLauncher/prismlauncher.cfg`.
+      '';
+    };
   };
 }

@@ -1,8 +1,9 @@
 {
-  description = "A flake providing modules for declaratively configuring Prism Launcher";
+  description = "A flake for declaratively configuring Prism Launcher with Home Manager";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+
     flake-utils.url = "github:numtide/flake-utils";
 
     treefmt-nix = {
@@ -37,11 +38,6 @@
     // {
       homeModules = rec {
         prismlauncher = import ./modules/home.nix;
-        default = prismlauncher;
-      };
-
-      nixosModules = rec {
-        prismlauncher = import ./modules/nixos.nix;
         default = prismlauncher;
       };
     };
