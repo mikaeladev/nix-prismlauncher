@@ -37,7 +37,7 @@ in
 
 {
   options.programs.prismlauncher = {
-    enable = mkEnableOption "Whether to enable Prism Launcher";
+    enable = mkEnableOption "Prism Launcher";
 
     package = mkOption {
       type = types.nullOr types.package;
