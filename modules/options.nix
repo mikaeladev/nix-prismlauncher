@@ -7,6 +7,32 @@ let
     mkOption
     types
     ;
+
+  mkThemeOptions =
+    {
+      default,
+      example,
+      themeType,
+    }:
+
+    {
+      name = mkOption {
+        inherit default example;
+        type = types.str;
+        description = ''
+          Name of the selected ${themeType} theme.
+        '';
+      };
+
+      package = mkOption {
+        type = types.nullOr types.package;
+        default = null;
+        description = ''
+          Package providing the ${themeType} theme. Themes can be sourced from
+          <https://github.com/PrismLauncher/Themes>. 
+        '';
+      };
+    };
 in
 
 {
@@ -22,6 +48,24 @@ in
         your profile. If `null` then Prism Launcher is assumed to already be
         available in your profile.
       '';
+    };
+
+    appTheme = mkThemeOptions {
+      default = "system";
+      example = literalExpression "dark";
+      themeType = "application";
+    };
+
+    catTheme = mkThemeOptions {
+      default = "kitteh";
+      example = literalExpression "rory";
+      themeType = "cat";
+    };
+
+    iconTheme = mkThemeOptions {
+      default = "flat";
+      example = literalExpression "breeze_light";
+      themeType = "icon";
     };
 
     extraConfig = mkOption {

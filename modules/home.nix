@@ -7,7 +7,12 @@ let
   cfg = config.programs.prismlauncher;
 
   finalConfig = with cfg; {
-    General = extraConfig;
+    General = {
+      ApplicationTheme = cfg.appTheme.name;
+      BackgroundCat = cfg.catTheme.name;
+      IconTheme = cfg.iconTheme.name;
+    }
+    // extraConfig;
   };
 
   emptyConfig = {
@@ -22,7 +27,12 @@ in
   ];
 
   config = mkIf cfg.enable {
-    home.packages = mkIf (cfg.package != null) [ cfg.package ];
+    home.packages = builtins.concatLists [
+      (if cfg.package != null then [ cfg.package ] else [ ])
+      (if cfg.appTheme.package != null then [ cfg.appTheme.package ] else [ ])
+      (if cfg.catTheme.package != null then [ cfg.catTheme.package ] else [ ])
+      (if cfg.iconTheme.package != null then [ cfg.iconTheme.package ] else [ ])
+    ];
 
     home.activation = mkIf (finalConfig != { }) {
       prismlauncherConfigActivation = (
