@@ -37,7 +37,7 @@
 
     // {
       homeModules = rec {
-        prismlauncher = import ./modules/home.nix;
+        prismlauncher = import ./home.nix;
         default = prismlauncher;
       };
     };
