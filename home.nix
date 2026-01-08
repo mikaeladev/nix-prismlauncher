@@ -62,8 +62,7 @@ in
         default = "flat";
         example = literalExpression "breeze_light";
         description = ''
-          Name of the selected icon theme. Additional themes can be sourced
-          from <https://github.com/PrismLauncher/Themes>.
+          Name of the selected icon theme.
         '';
       };
 
@@ -72,8 +71,7 @@ in
         default = "system";
         example = literalExpression "dark";
         description = ''
-          Name of the selected widget theme. Additional themes can be sourced
-          from <https://github.com/PrismLauncher/Themes>.
+          Name of the selected widget theme.
         '';
       };
 
@@ -82,8 +80,18 @@ in
         default = "kitteh";
         example = literalExpression "rory";
         description = ''
-          Name of the selected cat theme. Additional themes can be sourced from
-          <https://github.com/PrismLauncher/Themes>.
+          Name of the selected cat theme.
+        '';
+      };
+
+      extraPackages = mkOption {
+        type = types.listOf types.package;
+        default = [ ];
+        description = ''
+          Additional theme packages to install to the user environment.
+
+          Themes can be sourced from <https://github.com/PrismLauncher/Themes>
+          and should install to `$out/share/PrismLauncher/{themes,iconthemes,catpacks}`.
         '';
       };
     };
@@ -121,7 +129,8 @@ in
       cfg.extraConfig
     ];
 
-    home.packages = mkIf (cfg.package != null) [ cfg.package ];
+    home.packages =
+      (mkIf (cfg.package != null) [ cfg.package ]) ++ cfg.theme.extraPackages;
 
     home.activation = {
       prismlauncherConfigActivation = (
