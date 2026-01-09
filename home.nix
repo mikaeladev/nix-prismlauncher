@@ -130,8 +130,9 @@ in
       cfg.extraConfig
     ];
 
-    home.packages =
-      (mkIf (cfg.package != null) [ cfg.package ]) ++ cfg.theme.extraPackages;
+    home.packages = mkMerge (
+      [ (mkIf (cfg.package != null) [ cfg.package ]) ] ++ cfg.theme.extraPackages
+    );
 
     home.activation = {
       prismlauncherConfigActivation = (
