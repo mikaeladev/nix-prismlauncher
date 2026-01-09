@@ -23,7 +23,7 @@ let
 
   dataDir = "${config.xdg.dataHome}/PrismLauncher";
 
-  iniFormat = pkgs.formats.ini;
+  iniFormat = pkgs.formats.ini { };
 
   impureConfigMerger =
     filePath: staticSettingsFile: emptySettingsFile:
