@@ -9,6 +9,7 @@ let
   inherit (lib)
     escapeShellArg
     getExe
+    listToAttrs
     literalExpression
     mkDefault
     mkEnableOption
@@ -142,14 +143,13 @@ in
       );
     };
 
-    xdg.dataFile = mkMerge [
-      (mkIf (cfg.icons != [ ]) (
+    xdg.dataFile = mkIf (cfg.icons != [ ]) (
+      listToAttrs (
         map (source: {
-          "${cfg.finalConfig.General.IconsDir}/${baseNameOf source}" = {
-            inherit source;
-          };
+          name = "${cfg.finalConfig.General.IconsDir}/${baseNameOf source}";
+          value = { inherit source; };
         }) cfg.icons
-      ))
-    ];
+      )
+    );
   };
 }
