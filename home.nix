@@ -98,7 +98,7 @@ in
     };
 
     extraConfig = mkOption {
-      type = iniFormat.type;
+      type = types.attrsOf iniFormat.lib.types.atom;
       default = { };
       example = {
         ShowConsole = true;
