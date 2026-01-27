@@ -11,7 +11,6 @@ let
     getExe
     listToAttrs
     literalExpression
-    mkDefault
     mkEnableOption
     mkIf
     mkMerge
@@ -119,7 +118,7 @@ in
 
   config = mkIf cfg.enable {
     programs.prismlauncher.finalConfig.General = mkMerge [
-      (mkIf (cfg.icons != [ ]) { IconsDir = mkDefault "${dataDir}/icons"; })
+      (mkIf (cfg.icons != [ ]) { IconsDir = "${dataDir}/icons"; })
 
       (with cfg.theme; {
         IconTheme = icons;
@@ -147,7 +146,7 @@ in
     home.file = mkIf (cfg.icons != [ ]) (
       listToAttrs (
         map (source: {
-          name = "${cfg.finalConfig.General.IconsDir}/${baseNameOf source}";
+          name = "${dataDir}/icons/${baseNameOf source}";
           value = { inherit source; };
         }) cfg.icons
       )
