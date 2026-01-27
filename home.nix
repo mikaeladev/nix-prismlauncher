@@ -6,6 +6,8 @@
 }:
 
 let
+  inherit (pkgs.stdenv.hostPlatform) isDarwin;
+
   inherit (lib)
     escapeShellArg
     getExe
@@ -22,7 +24,11 @@ let
 
   cfg = config.programs.prismlauncher;
 
-  dataDir = "${config.xdg.dataHome}/PrismLauncher";
+  dataDir =
+    if isDarwin then
+      "Library/Application Support/PrismLauncher"
+    else
+      "${config.xdg.dataHome}/PrismLauncher";
 
   iniFormat = pkgs.formats.ini { };
 
@@ -49,7 +55,10 @@ in
       default = [ ];
       example = literalExpression "[ ./java.png ]";
       description = ''
-        List of paths to instance icons. These will be linked in {file}`$XDG_DATA_HOME/PrismLauncher/icons`.
+        List of paths to instance icons.
+
+        These will be linked in {file}`$XDG_DATA_HOME/PrismLauncher/icons` on Linux and
+        {file}`~/Library/Application Support/PrismLauncher/icons` on macOS.
       '';
     };
 
@@ -87,7 +96,8 @@ in
         description = ''
           Additional theme packages to install to the user environment.
 
-          Themes can be sourced from <https://github.com/PrismLauncher/Themes> and should install to `$out/share/PrismLauncher/{themes,iconthemes,catpacks}`.
+          Themes can be sourced from <https://github.com/PrismLauncher/Themes> and should
+          install to `$out/share/PrismLauncher/{themes,iconthemes,catpacks}`.
         '';
       };
     };
@@ -100,7 +110,7 @@ in
         ConsoleMaxLines = 100000;
       };
       description = ''
-        Configuration written to {file}`$XDG_DATA_HOME/PrismLauncher/prismlauncher.cfg`.
+        Configuration written to {file}`prismlauncher.cfg`.
       '';
     };
 
