@@ -26,19 +26,16 @@ let
 
   iniFormat = pkgs.formats.ini { };
 
-  impureConfigMerger =
-    filePath: staticSettingsFile: emptySettingsFile:
+  impureConfigMerger = filePath: staticSettingsFile: emptySettingsFile: ''
+    mkdir -p $(dirname ${escapeShellArg filePath})
 
-    ''
-      mkdir -p $(dirname ${escapeShellArg filePath})
+    if [ ! -e ${escapeShellArg filePath} ]; then
+      cat ${escapeShellArg emptySettingsFile} > ${escapeShellArg filePath}
+    fi
 
-      if [ ! -e ${escapeShellArg filePath} ]; then
-        cat ${escapeShellArg emptySettingsFile} > ${escapeShellArg filePath}
-      fi
-
-      ${getExe pkgs.crudini} --merge --ini-options=nospace \
-        ${escapeShellArg filePath} < ${escapeShellArg staticSettingsFile}
-    '';
+    ${getExe pkgs.crudini} --merge --ini-options=nospace \
+      ${escapeShellArg filePath} < ${escapeShellArg staticSettingsFile}
+  '';
 in
 
 {
@@ -52,8 +49,7 @@ in
       default = [ ];
       example = literalExpression "[ ./java.png ]";
       description = ''
-        List of paths to icon files used for instances. These will be linked
-        in {file}`$XDG_DATA_HOME/PrismLauncher/icons`.
+        List of paths to instance icons. These will be linked in {file}`$XDG_DATA_HOME/PrismLauncher/icons`.
       '';
     };
 
@@ -91,13 +87,12 @@ in
         description = ''
           Additional theme packages to install to the user environment.
 
-          Themes can be sourced from <https://github.com/PrismLauncher/Themes>
-          and should install to `$out/share/PrismLauncher/{themes,iconthemes,catpacks}`.
+          Themes can be sourced from <https://github.com/PrismLauncher/Themes> and should install to `$out/share/PrismLauncher/{themes,iconthemes,catpacks}`.
         '';
       };
     };
 
-    extraConfig = mkOption {
+    settings = mkOption {
       type = types.attrsOf iniFormat.lib.types.atom;
       default = { };
       example = {
@@ -105,15 +100,14 @@ in
         ConsoleMaxLines = 100000;
       };
       description = ''
-        Extra config for {file}`$XDG_DATA_HOME/PrismLauncher/prismlauncher.cfg`.
+        Configuration written to {file}`$XDG_DATA_HOME/PrismLauncher/prismlauncher.cfg`.
       '';
     };
 
     finalConfig = mkOption {
+      internal = true;
       type = iniFormat.type;
       default = { };
-      visible = false;
-      internal = true;
     };
   };
 
@@ -127,7 +121,7 @@ in
         BackgroundCat = cat;
       })
 
-      cfg.extraConfig
+      cfg.settings
     ];
 
     home.packages = mkMerge (
