@@ -66,7 +66,7 @@ in
       icons = mkOption {
         type = types.str;
         default = "flat";
-        example = literalExpression "breeze_light";
+        example = "breeze_light";
         description = ''
           Name of the selected icon theme.
         '';
@@ -75,7 +75,7 @@ in
       widgets = mkOption {
         type = types.str;
         default = "system";
-        example = literalExpression "dark";
+        example = "dark";
         description = ''
           Name of the selected widget theme.
         '';
@@ -84,7 +84,7 @@ in
       cat = mkOption {
         type = types.str;
         default = "kitteh";
-        example = literalExpression "rory";
+        example = "rory";
         description = ''
           Name of the selected cat theme.
         '';
