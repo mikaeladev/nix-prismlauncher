@@ -144,7 +144,7 @@ in
       );
     };
 
-    xdg.dataFile = mkIf (cfg.icons != [ ]) (
+    home.file = mkIf (cfg.icons != [ ]) (
       listToAttrs (
         map (source: {
           name = "${cfg.finalConfig.General.IconsDir}/${baseNameOf source}";
