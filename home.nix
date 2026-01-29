@@ -25,7 +25,7 @@ let
   cfg = config.programs.prismlauncher;
 
   dataDir =
-    if isDarwin then
+    if (isDarwin && !config.xdg.enable) then
       "Library/Application Support/PrismLauncher"
     else
       "${config.xdg.dataHome}/PrismLauncher";
@@ -33,14 +33,14 @@ let
   iniFormat = pkgs.formats.ini { };
 
   impureConfigMerger = filePath: staticSettingsFile: emptySettingsFile: ''
-    mkdir -p $(dirname ${escapeShellArg filePath})
+    mkdir -p $(dirname '${escapeShellArg filePath}')
 
-    if [ ! -e ${escapeShellArg filePath} ]; then
-      cat ${escapeShellArg emptySettingsFile} > ${escapeShellArg filePath}
+    if [ ! -e '${escapeShellArg filePath}' ]; then
+      cat '${escapeShellArg emptySettingsFile}' > '${escapeShellArg filePath}'
     fi
 
     ${getExe pkgs.crudini} --merge --ini-options=nospace \
-      ${escapeShellArg filePath} < ${escapeShellArg staticSettingsFile}
+      '${escapeShellArg filePath}' < '${escapeShellArg staticSettingsFile}'
   '';
 in
 
@@ -123,7 +123,7 @@ in
 
   config = mkIf cfg.enable {
     programs.prismlauncher.finalConfig.General = mkMerge [
-      (mkIf (cfg.icons != [ ]) { IconsDir = mkDefault "${dataDir}/icons"; })
+      (mkIf (cfg.icons != [ ]) { IconsDir = mkDefault "icons"; })
 
       (with cfg.theme; {
         IconTheme = icons;
