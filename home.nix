@@ -13,7 +13,6 @@ let
     getExe
     listToAttrs
     literalExpression
-    mkDefault
     mkEnableOption
     mkIf
     mkMerge
@@ -50,6 +49,17 @@ in
 
     package = mkPackageOption pkgs "prismlauncher" { nullable = true; };
 
+    extraPackages = mkOption {
+      type = types.listOf types.package;
+      default = [ ];
+      description = ''
+        Additional theme packages to install to the user environment.
+
+        Themes can be sourced from <https://github.com/PrismLauncher/Themes> and should
+        install to `$out/share/PrismLauncher/{themes,iconthemes,catpacks}`.
+      '';
+    };
+
     icons = mkOption {
       type = types.listOf types.path;
       default = [ ];
@@ -60,46 +70,6 @@ in
         These will be linked in {file}`$XDG_DATA_HOME/PrismLauncher/icons` on Linux and
         {file}`~/Library/Application Support/PrismLauncher/icons` on macOS.
       '';
-    };
-
-    theme = {
-      icons = mkOption {
-        type = types.str;
-        default = "flat";
-        example = "breeze_light";
-        description = ''
-          Name of the selected icon theme.
-        '';
-      };
-
-      widgets = mkOption {
-        type = types.str;
-        default = "system";
-        example = "dark";
-        description = ''
-          Name of the selected widget theme.
-        '';
-      };
-
-      cat = mkOption {
-        type = types.str;
-        default = "kitteh";
-        example = "rory";
-        description = ''
-          Name of the selected cat theme.
-        '';
-      };
-
-      extraPackages = mkOption {
-        type = types.listOf types.package;
-        default = [ ];
-        description = ''
-          Additional theme packages to install to the user environment.
-
-          Themes can be sourced from <https://github.com/PrismLauncher/Themes> and should
-          install to `$out/share/PrismLauncher/{themes,iconthemes,catpacks}`.
-        '';
-      };
     };
 
     settings = mkOption {
@@ -113,37 +83,20 @@ in
         Configuration written to {file}`prismlauncher.cfg`.
       '';
     };
-
-    finalConfig = mkOption {
-      internal = true;
-      type = iniFormat.type;
-      default = { };
-    };
   };
 
   config = mkIf cfg.enable {
-    programs.prismlauncher.finalConfig.General = mkMerge [
-      (mkIf (cfg.icons != [ ]) { IconsDir = mkDefault "icons"; })
-
-      (with cfg.theme; {
-        IconTheme = icons;
-        ApplicationTheme = widgets;
-        BackgroundCat = cat;
-      })
-
-      cfg.settings
-    ];
-
     home.packages = mkMerge (
-      [ (mkIf (cfg.package != null) [ cfg.package ]) ] ++ cfg.theme.extraPackages
+      [ (mkIf (cfg.package != null) [ cfg.package ]) ] ++ cfg.extraPackages
     );
 
     home.activation = {
       prismlauncherConfigActivation = (
         lib.hm.dag.entryAfter [ "linkGeneration" ] (
-          impureConfigMerger "${dataDir}/prismlauncher.cfg"
-            (iniFormat.generate "prismlauncher-static.cfg" cfg.finalConfig)
-            (iniFormat.generate "prismlauncher-empty.cfg" { General = { }; })
+          impureConfigMerger "${dataDir}/prismlauncher.cfg" (iniFormat.generate
+            "prismlauncher-static.cfg"
+            { General = cfg.settings; }
+          ) (iniFormat.generate "prismlauncher-empty.cfg" { General = { }; })
         )
       );
     };
